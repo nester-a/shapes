@@ -1,16 +1,16 @@
 fn main() {
-    let mut shape_geom = Geometry::new(Shape::Circle(2.0));
+    let mut shape_geom = Geometry::new(Shape::Circle(3.0));
     println!("calc {:?}", shape_geom);
-    println!("is_valid: {}; area: {}", shape_geom.is_valid(), shape_geom.area());
+    println!("is_valid: {}; perimeter: {}; area: {}", shape_geom.is_valid(), shape_geom.perimeter(), shape_geom.area());
 
     shape_geom = Geometry::new(Shape::Rectangle(1.1, 2.2));
     println!("calc {:?}", shape_geom);
-    println!("is_valid: {}; area: {}", shape_geom.is_valid(), shape_geom.area());
+    println!("is_valid: {}; perimeter: {}; area: {}", shape_geom.is_valid(), shape_geom.perimeter(), shape_geom.area());
 
     println!("error demonstration");
     shape_geom = Geometry::new(Shape::Circle(-1.1));
     println!("calc {:?}", shape_geom);
-    println!("is_valid: {}; area: {}", shape_geom.is_valid(), shape_geom.area());
+    println!("is_valid: {}; perimeter: {}; area: {}", shape_geom.is_valid(), shape_geom.perimeter(), shape_geom.area());
 }
 
 #[derive(Debug)]
@@ -30,6 +30,20 @@ impl Geometry {
         Geometry { shape }
     }
 
+    fn perimeter(&self) -> f64 {
+        if self.is_valid() == false {
+            return f64::NAN;
+        }
+
+        match self.shape {
+            Shape::Circle(r) => 2.0 * 3.14 * r,
+            Shape::Rectangle(w, h) => 2.0 * (w + h),
+            Shape::Triangle(a, b, c) => {
+                (a + b + c) / 2.0
+            }
+        }
+    }
+
     fn area(&self) -> f64 {
         if self.is_valid() == false {
             return f64::NAN;
@@ -39,7 +53,7 @@ impl Geometry {
             Shape::Circle(r) => 3.14 * r * r,
             Shape::Rectangle(w, h) => w * h,
             Shape::Triangle(a, b, c) => {
-                let p = (a + b + c) / 2.0;
+                let p = self.perimeter();
                 p * (p - a) * (p - b) * (p - c).sqrt()
             }
         }
